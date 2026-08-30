@@ -2,19 +2,21 @@
 
 Arctic2 publishes to npm when a version tag is pushed. The workflow never changes the version itself and only accepts a tag whose commit is already on `main`.
 
-## Initial npm Setup
+## Release Credentials
 
-1. Enable two-factor authentication on the `pablote` npm account.
-2. On npmjs.com, open **Access Tokens** and create a granular token with read/write access to all packages. A package-specific token cannot select `arctic2` until the first version exists.
-3. Enable **Bypass two-factor authentication** for the token so GitHub Actions can publish unattended.
-4. Give the bootstrap token the shortest practical expiration.
-5. In the GitHub repository, open **Settings**, **Secrets and variables**, **Actions**, then create the repository secret `NPM_TOKEN` with the token value.
+Publishing authenticates with the GitHub Actions repository secret `NPM_TOKEN`. Keep it set to an unexpired granular npm token with read/write access only to `arctic2` and **Bypass two-factor authentication** enabled.
 
-The initial token can create any package owned by the npm account, so revoke it immediately after the first successful release.
+Rotate the token before it expires:
+
+1. Create a replacement token with the same package restriction and permissions.
+2. Replace the `NPM_TOKEN` repository secret.
+3. Revoke the previous token.
+
+Trusted Publishing can later replace `NPM_TOKEN` with short-lived GitHub OIDC credentials. That migration is tracked in [issue #2](https://github.com/pablote/arctic2/issues/2).
 
 ## Publish a Version
 
-1. Set the intended version without creating a tag. The repository is already set to `3.7.0` for the initial release, so skip this command the first time:
+1. Set the intended version without creating a tag. For example:
 
 ```sh
 npm version 3.7.1 --no-git-tag-version
@@ -34,21 +36,11 @@ npm run pack:check
 ```sh
 git switch main
 git pull --ff-only
-git tag -a v3.7.0 -m "Arctic2 v3.7.0"
-git push origin v3.7.0
+version=$(node -p "require('./package.json').version")
+git tag -a "v${version}" -m "Arctic2 v${version}"
+git push origin "v${version}"
 ```
 
 The `Publish to npm` workflow validates that the tag is `v${package.json.version}`, validates that the commit belongs to `main`, repeats all checks, and publishes the package with npm provenance. It does not create a GitHub Release page.
-
-## Restrict the Token
-
-After `arctic2@3.7.0` exists:
-
-1. Create a new granular npm token with read/write access only to `arctic2` and enable bypass-2FA.
-2. Replace the `NPM_TOKEN` GitHub Actions secret with the new value.
-3. Revoke the all-packages bootstrap token.
-4. Track the token expiration and rotate it before the next release that follows it.
-
-Trusted Publishing can later replace `NPM_TOKEN` with short-lived GitHub OIDC credentials. That migration is intentionally deferred from the initial release flow and tracked in [issue #2](https://github.com/pablote/arctic2/issues/2).
 
 Optional GitHub Release pages are separately tracked in [issue #1](https://github.com/pablote/arctic2/issues/1).
