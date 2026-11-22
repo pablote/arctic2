@@ -1,7 +1,7 @@
 {
 	"name": "arctic2",
 	"type": "module",
-	"version": "3.7.0",
+	"version": "3.7.1",
 	"description": "Maintained OAuth 2.0 clients for popular providers",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
@@ -37,15 +37,15 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "10.0.1",
-		"@types/node": "24.13.3",
-		"eslint": "10.9.1",
-		"prettier": "3.9.6",
+		"@types/node": "26.6.6",
+		"eslint": "10.15.0",
+		"prettier": "3.10.1",
 		"typescript": "6.0.3",
-		"typescript-eslint": "8.68.0",
-		"vitest": "4.1.11"
+		"typescript-eslint": "8.73.0",
+		"vitest": "5.1.1"
 	},
 	"dependencies": {
 		"@noble/hashes": "2.4.0",
-		"jose": "6.2.10"
+		"jose": "6.2.18"
 	}
 }
