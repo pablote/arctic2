@@ -4,13 +4,14 @@ Arctic2 publishes to npm when a version tag is pushed. The workflow never change
 
 ## Release Credentials
 
-Publishing authenticates with the GitHub Actions repository secret `NPM_TOKEN`. Keep it set to an unexpired granular npm token with read/write access only to `arctic2` and **Bypass two-factor authentication** enabled.
+Only the `npm publish` step in `.github/workflows/publish.yaml` uses the repository secret `NPM_TOKEN`. If the token expires, local builds, pull-request checks, and installs of published versions keep working. Replace it before the next release.
 
 Rotate the token before it expires:
 
-1. Create a replacement token with the same package restriction and permissions.
-2. Replace the `NPM_TOKEN` repository secret.
-3. Revoke the previous token.
+1. Sign in to npm as a maintainer of `arctic2`. Under **Access Tokens → Generate New Token**, create a granular token with a distinct name and an expiration date.
+2. Under **Packages and scopes**, choose **Read and write (publish and stage)** and select only `arctic2`. Enable **Bypass two-factor authentication** so the release job can publish unattended. Leave **Organizations** at **No access**.
+3. Generate the token and copy its value into the existing `NPM_TOKEN` secret under [GitHub → Settings → Secrets and variables → Actions](https://github.com/pablote/arctic2/settings/secrets/actions). Keep the secret name unchanged.
+4. Revoke the old token on npm once its replacement is in place. Set a reminder for the new expiration. On the next planned release, confirm the **Publish package** step succeeds; a green CI build alone does not exercise the credential.
 
 Trusted Publishing can later replace `NPM_TOKEN` with short-lived GitHub OIDC credentials. That migration is tracked in [issue #2](https://github.com/pablote/arctic2/issues/2).
 
